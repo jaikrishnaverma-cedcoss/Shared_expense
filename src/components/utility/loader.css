@@ -16,9 +16,22 @@
     75%  {background-size:25px 50% ,25px 50% ,25px 100%}
     100% {background-size:25px 50% ,25px 50% ,25px 50%}
   }
+  .loader-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    margin: 5px;
+  }
+
   .fullpage--loader{
-    position: absolute;
+    position: fixed;
     width: 100vw;
     height: 100vh;
     z-index: 10000000;
+  }
+
+  .loader-backdrop{
+    background-color: #00000038;
   }

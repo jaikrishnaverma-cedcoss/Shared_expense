@@ -1,0 +1,33 @@
+.button--change:hover{
+filter:  contrast(1.75);;
+}
+.css-zxdg2z{
+padding-top: 5px !important;
+}
+
+.no-transaction-cell {
+    text-align: center;
+    padding: 100px 20px;
+
+    font-size: 18px;
+    color: #555;
+    background-color: #f9f9f9;
+  }
+  
+  .no-transaction-cell:hover {
+    background-color: #eaeaea;
+  }
+.MuiBox-root.css-19kzrtu{
+padding: 0px;
+}
+.MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-hyum1k-MuiToolbar-root,.MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-i6s8oy{
+  display: none;
+}
+
+@media screen and (max-width: 900px) {
+.css-tywybu-MuiContainer-root{
+padding-left: 5px !important;
+padding-right: 5px !important;
+}
+
+}

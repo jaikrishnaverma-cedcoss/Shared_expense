@@ -1,12 +1,10 @@
 import React from "react";
 import "./loader.css";
-const Loader = (props) => {
+const Loader = ({fullPage,backdrop}) => {
+
   return (
-    <div
-      className={`w-100 h-100 d-flex justify-content-center align-items-center my-2 ${
-        props?.fullpage ? "fullpage--loader" : ""
-      }`}
-      style={{ height: "100%" }}
+      <div
+      className={`${fullPage?`loader-wrapper fullpage--loader`:`loader-wrapper`} ${backdrop?'loader-backdrop':''}`}
     >
       <div className="loader"></div>
     </div>

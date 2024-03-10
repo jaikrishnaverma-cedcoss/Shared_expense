@@ -8,10 +8,10 @@ import AddIcon from '@mui/icons-material/Add';
 
 export default function FloatingAdd(props) {
   return (
-  <div style={{position:'fixed',bottom:'3vh',right:'20px'}}>
+  <div style={{position:'fixed',bottom:'3vh',right:'20px'}}   onClick={props.onclick} >
       <Box sx={{ '& > :not(style)': { m: 1 } }}>
       <Fab color="secondary" aria-label="add">
-        <AddIcon  onClick={props.onclick} />
+        <AddIcon/>
       </Fab>
       {/* <Fab color="secondary" aria-label="edit">
         <EditIcon />

@@ -1,27 +1,35 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import DI from "../utility/DI";
+import { useNavigate } from "react-router-dom";
+import Footer from "../utility/Footer";
 
 function Copyright(props) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
         Your Website
-      </Link>{' '}
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
@@ -30,13 +38,26 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-const Signup=()=>{
+const Signup = (props) => {
+  const {
+    di: { POST, urls, error, success },
+  } = props;
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    const formDataObject = {};
+
+    for (const [key, value] of data.entries()) {
+      formDataObject[key.toLowerCase()] = value;
+    }
+
+    POST(urls.post.signup, formDataObject).then((res) => {
+      if (res.success) {
+        success(res.message);
+        form.reset();
+      } else error(res.message);
     });
   };
 
@@ -47,18 +68,28 @@ const Signup=()=>{
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <div style={{ width: "80px" }}>
+            <img
+              style={{ width: "100%" }}
+              src={"/transparent_logo.png"}
+              alt={"spent_app"}
+              loading="lazy"
+            />
+          </div>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{ mt: 3, px: 2 }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -102,12 +133,14 @@ const Signup=()=>{
                   autoComplete="new-password"
                 />
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  control={
+                    <Checkbox value="allowExtraEmails" color="primary" />
+                  }
                   label="I want to receive inspiration, marketing promotions and updates via email."
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             <Button
               type="submit"
@@ -119,16 +152,22 @@ const Signup=()=>{
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link
+                  onClick={() => navigate("/login")}
+                  style={{ cursor: "pointer" }}
+                  variant="body2"
+                >
                   Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <div style={{ marginTop: "20px" }}>
+          <Footer />
+        </div>
       </Container>
     </ThemeProvider>
   );
-}
-export default Signup
+};
+export default DI(Signup);

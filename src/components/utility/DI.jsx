@@ -4,6 +4,8 @@ import { environment } from "../../Env_data/environment";
 import { fakeApiResponse } from "../fakeResponse";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
+import { urlFetchCalls } from "../../Constant";
+import { StepContent } from "@mui/material";
 export const createQuery = (obj, initial = false) => {
   let str = initial ? "?" : "&";
   const arr = Object.entries(obj);
@@ -21,48 +23,11 @@ const DI = (WrappedComponent) => {
     const navigate = useNavigate();
     const contextData = useContext(AppContext);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const GET = useCallback(async (url, payload) => {
-      try {
-        const response = await fetch(
-          `${base_url + url}` + createQuery(payload, true)
-        );
-        const isJson = response.headers
-          .get("content-type")
-          ?.includes("application/json");
-        const data = isJson && response.json();
-        if (!response.ok) {
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-        return response;
-      } catch (error) {
-        console.error("There was an error!", error);
-      }
-    }, []);
-
-    const POST = useCallback(async (url, payload) => {
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      };
-      try {
-        const response = await fetch(`${base_url + url}`, requestOptions);
-        const isJson = response.headers
-          .get("content-type")
-          ?.includes("application/json");
-        const data = isJson && response.json();
-        // check for error response
-        if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-        return response;
-      } catch (error) {
-        console.error("There was an error!", error);
-      }
-    }, []);
+    const logout = () => {
+      contextData.setState({ session: {} });
+      localStorage.removeItem(environment.APP_NAME);
+      navigate("/login");
+    };
     const error = (msg) => {
       enqueueSnackbar(msg, {
         variant: "error",
@@ -73,15 +38,76 @@ const DI = (WrappedComponent) => {
         variant: "success",
       });
     };
+    const GET = useCallback(async (url, payload = {}) => {
+      payload['auth_id']=contextData?.state?.session?.id??"";
+      payload['bearer']= contextData?.state?.session?.bearer??"";
+      try {
+        const response = await fetch(
+          `${base_url + url}` + createQuery(payload, true)
+        );
+        const data = response?.json() ?? {};
+        if (!response.ok) {
+       
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        }
+        return data;
+      } catch (error) {
+        console.error("There was an error!", error);
+      }
+    }, []);
+
+    const POST = useCallback(async (url, payload) => {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...payload,
+          auth_id: contextData?.state?.session?.id??"",
+          bearer: contextData?.state?.session?.bearer??"",
+        }),
+      };
+      try {
+        const response = await fetch(`${base_url + url}`, requestOptions);
+
+        const data = response?.json() ?? {
+          success: false,
+          message: "not json type",
+        };
+
+        // check for error response
+        if (!response.ok) {
+          console.log("API ERROR");
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        }
+        return data;
+      } catch (error) {
+        console.error("There was an error!", error);
+      }
+    }, []);
+
     const FAKE = useCallback(async (url, payload = {}) => {
       const data = await fakeApiResponse(url);
       return data;
     }, []);
-    console.log({contextData})
+
     return (
       <WrappedComponent
         {...props}
-        di={{ contextData,session:contextData?.state?.session, GET, POST, FAKE, error, success, navigate }}
+        di={{
+          contextData,
+          session: contextData?.state?.session,
+          GET,
+          POST,
+          FAKE,
+          error,
+          success,
+          navigate,
+          urls: urlFetchCalls,
+          logout,
+        }}
       />
     );
   };

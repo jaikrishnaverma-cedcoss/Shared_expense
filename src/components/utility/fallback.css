@@ -1,0 +1,42 @@
+.fallback-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+  }
+  .fallback-full{
+    width: 100vw;
+    height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .fallback-content {
+    text-align: center;
+  }
+  
+  .fallback-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #dc3545; /* Red color */
+  }
+  
+  .fallback-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #6c757d; /* Gray color */
+  }
+  
+  .fallback-message {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: #495057; /* Dark gray color */
+  }
+  
+  .fallback-contact {
+    font-size: 1rem;
+    cursor: pointer;
+    color: #007bff; /* Blue color */
+  }
+  

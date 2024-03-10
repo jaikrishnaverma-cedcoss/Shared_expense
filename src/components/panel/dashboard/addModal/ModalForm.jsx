@@ -14,6 +14,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: '96vw',
+  maxWidth:'380px',
   m:'1',
   bgcolor: "background.paper",
   borderRadius: "8px",
@@ -25,13 +26,13 @@ export default function ModalForm() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  React.useEffect(() => {
-    setTimeout(() => {
-      handleOpen();
-    }, 200);
-  }, []);
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     handleOpen();
+  //   }, 200);
+  // }, []);
   return (
-    <div>
+    <div style={{position:"relative"}}>
       <FloatingAdd onclick={handleOpen} />
       <Modal
         aria-labelledby="transition-modal-title"

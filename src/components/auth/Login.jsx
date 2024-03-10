@@ -12,8 +12,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import DI from "../utility/DependenciesInjection";
+import DI from "../utility/DI";
 import { CircularProgress } from "@mui/material";
+import Footer from "../utility/Footer";
+import { useNavigate } from "react-router-dom";
 function Copyright(props) {
   return (
     <Typography
@@ -37,16 +39,22 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 const Login = (props) => {
+  const [loginSuccess,setLoginSuccess]=React.useState(false)
   const {
     di: {
-      FAKE,
       success,
       error,
-      navigate,
+      POST,
+      urls,
       contextData: { setState },
     },
   } = props;
+  const navigate=useNavigate()
   const [loading, setLoading] = React.useState(false);
+  React.useEffect(()=>{
+if(loginSuccess)
+navigate('/panel');
+  },[loginSuccess])
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -54,19 +62,27 @@ const Login = (props) => {
     const password = data.get("password");
     if (email && password) {
       setLoading(true);
-      FAKE("login").then((res) => {
-        setLoading(false);
-        if (res.success) {
-          setState((prev) => {
-            return { ...prev, session: res.data };
-          });
-          // success(res?.msg);
-          navigate("/panel");
-        } else {
-          error(res?.msg);
-        }
-      });
-    }
+      POST(urls.post.login, { email, password })
+        .then((res) => {
+          if (res.success) {
+            setState((prev) => {
+              return { ...prev, session: res.user };
+            });
+              setLoading(false);
+              setLoginSuccess(true)
+
+            success(res?.message);
+          } else {
+            setLoading(false);
+            error(res?.message);
+          }
+        })
+        .catch((er) => {
+          setLoading(false);
+          error("Refresh page & Try again.");
+          console.log({ Error: er });
+        });
+    } else error("Please fill details.");
   };
 
   return (
@@ -81,9 +97,14 @@ const Login = (props) => {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <div style={{ width: "80px" }}>
+            <img
+              style={{ width: "100%" }}
+              src={"/transparent_logo.png"}
+              alt={"spent_app"}
+              loading="lazy"
+            />
+          </div>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
@@ -91,11 +112,12 @@ const Login = (props) => {
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 1 }}
+            sx={{ mt: 1, px: 2 }}
           >
             <TextField
               margin="normal"
               required
+              placeholder={"jai@gmail.com"}
               fullWidth
               id="email"
               label="Email Address"
@@ -107,6 +129,7 @@ const Login = (props) => {
               margin="normal"
               required
               fullWidth
+              placeholder={"Maggi@123"}
               name="password"
               label="Password"
               type="password"
@@ -137,14 +160,20 @@ const Login = (props) => {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link
+                  onClick={() => navigate("/signup")}
+                  style={{ cursor: "pointer" }}
+                  variant="body2"
+                >
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+        <div style={{ marginTop: "20px" }}>
+          <Footer />
+        </div>
       </Container>
     </ThemeProvider>
   );
